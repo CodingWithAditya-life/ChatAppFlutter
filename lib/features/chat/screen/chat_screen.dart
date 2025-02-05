@@ -1,9 +1,9 @@
 import 'package:chat_app/features/authentication/call/service/call_request_services.dart';
 import 'package:chat_app/features/authentication/call/service/generate_call_ID.dart';
-import 'package:chat_app/features/chat/screen/chat_list_widget.dart';
+import 'package:chat_app/features/chat/widget/chat_list_widget.dart';
 import 'package:chat_app/services/user_status_service.dart';
 import 'package:chat_app/features/chat/providers/chat_provider.dart';
-import 'package:chat_app/features/chat/screen/chat_app_bar.dart';
+import 'package:chat_app/features/chat/widget/chat_app_bar_widget.dart';
 import 'package:chat_app/model/message_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

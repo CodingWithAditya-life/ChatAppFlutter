@@ -35,6 +35,4 @@ class SendChatWidget extends StatelessWidget {
       ),
     );
   }
-
-
 }

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:chat_app/core/theme/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';

@@ -153,9 +153,7 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Widget _buildTextInput(
-      String hint, IconData icon, TextEditingController controller,
-      {bool isPassword = false}) {
+  Widget _buildTextInput(String hint, IconData icon, TextEditingController controller, {bool isPassword = false}) {
     return Container(
       decoration: BoxDecoration(
         color: DefaultColors.sentMessageInput,

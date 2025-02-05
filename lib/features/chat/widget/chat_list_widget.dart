@@ -1,5 +1,5 @@
-import 'package:chat_app/features/chat/screen/receive_chat_widget.dart';
-import 'package:chat_app/features/chat/screen/send_chat_widget.dart';
+import 'package:chat_app/features/chat/widget/receive_chat_widget.dart';
+import 'package:chat_app/features/chat/widget/send_chat_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

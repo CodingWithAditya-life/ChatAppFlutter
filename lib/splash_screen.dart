@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:chat_app/core/constants/const.dart';
 import 'package:chat_app/core/theme/theme.dart';
 import 'package:chat_app/features/home/home_screen.dart';
 import 'package:chat_app/features/authentication/screens/signUp_screen.dart';
@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: DefaultColors.messageListPage,
       body: Center(
-        child: Image(image: AssetImage('assets/icon/chat_app_icon.png'), width: 95, height: 95),
+        child: Image(image: AssetImage(AppInfo.appIcon), width: 95, height: 95),
       ),
     );
   }

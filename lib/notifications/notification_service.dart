@@ -17,7 +17,6 @@ class NotificationService {
     _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
-        // Handle notification click when app is in foreground
         if (response.payload != null) {
           Map<String, dynamic> data = jsonDecode(response.payload!);
         }

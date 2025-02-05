@@ -6,8 +6,7 @@ import '../../../../notifications/push_notification_services.dart';
 
 class CallRequestServices {
   final DeviceTokenServices tokenServices = DeviceTokenServices();
-  final DatabaseReference reference = FirebaseDatabase.instance.ref(
-      "callRequests");
+  final DatabaseReference reference = FirebaseDatabase.instance.ref("callRequests");
 
   Future<void> sendCallRequest(String receiverID, String callID) async {
     String? uid = FirebaseAuth.instance.currentUser?.uid;

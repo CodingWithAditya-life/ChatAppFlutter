@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:googleapis/admob/v1.dart';
 import '../../../model/user_model.dart';
 import '../../../notifications/get_server_key.dart';
 import '../../../notifications/push_notification_services.dart';
@@ -26,18 +27,19 @@ class ChatProvider with ChangeNotifier {
       chatList.clear();
       var data = event.snapshot.children;
       for (var element in data) {
-          var chat = ChatModel(
-              senderId: element.child("sender_id").value.toString(),
-              receiverId: element.child("receiver_id").value.toString(),
-              message: element.child("message").value.toString(),
-              status: element.child("status").value.toString(),
-              message_type: element.child("message_type").value.toString(),
-              photo_url: element.child("photo_url").value.toString(),
-              dateTime: element.child('dateTime').value != null
-                  ? DateTime.parse(element.child('dateTime').value.toString())
-                  : null);
-          chatList.add(chat);
-        }
+        var chat = ChatModel(
+            senderId: element.child("sender_id").value.toString(),
+            receiverId: element.child("receiver_id").value.toString(),
+            message: element.child("message").value.toString(),
+            status: element.child("status").value.toString(),
+            message_type: element.child("message_type").value.toString(),
+            photo_url: element.child("photo_url").value.toString(),
+            dateTime: element.child('dateTime').value != null
+                ? DateTime.parse(element.child('dateTime').value.toString())
+                : null);
+        chatList.add(chat);
+        // notifyListeners();
+      }
       notifyListeners();
     });
   }
@@ -50,18 +52,33 @@ class ChatProvider with ChangeNotifier {
     DatabaseReference starCountRef =
         FirebaseDatabase.instance.ref('chatMessages/$chatId');
 
+    DatabaseReference userRef =
+        FirebaseDatabase.instance.ref('user/$currentUserId');
+    var userSnapshot = await userRef.get();
+
+    String senderName = "Unknown";
+
+    if (userSnapshot.exists) {
+      senderName =
+          userSnapshot.child("name").value?.toString() ?? 'Unknown Person';
+      print("Sender Name: $senderName");
+    } else {
+      print("User data not found in Firebase.");
+    }
+
     await starCountRef.child(randomId).set(ChatModel(
-          message: messageController.text.toString(),
-          senderId: "$uid",
-          receiverId: otherUid,
-          status: "sent",
-        ).toJson());
+            message: messageController.text.toString(),
+            senderId: "$uid",
+            receiverId: otherUid,
+            status: "sent",
+    dateTime: DateTime.now())
+        .toJson());
 
     String? deviceToken = await tokenServices.getDeviceToken(otherUid);
     if (deviceToken != null && deviceToken.isNotEmpty) {
       await PushNotificationService.sendNotificationToUser(
           token: deviceToken,
-          title: "New message",
+          title: senderName,
           message: messageController.text,
           otherUid: otherUid);
     } else {

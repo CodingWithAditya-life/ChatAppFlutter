@@ -11,9 +11,6 @@ class PushNotificationService {
 
     String accessToken = await GetServerKey().getServerKey();
 
-    final UserProvider userProvider = UserProvider();
-    final user = userProvider.currentUserName;
-
     var headers = <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $accessToken',
@@ -23,7 +20,7 @@ class PushNotificationService {
       "message": {
         "token": token,
         "notification": {
-          "title": user,
+          "title": title,
           "body": message,
         },
         "data": {

@@ -7,9 +7,9 @@ import 'package:chat_app/features/chat/widget/chat_app_bar_widget.dart';
 import 'package:chat_app/model/message_input.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:chat_app/features/authentication/call/service/video_call_services.dart';
-
 
 class ChatScreen extends StatefulWidget {
   final String otherUid;
@@ -103,7 +103,11 @@ class _ChatScreenState extends State<ChatScreen> {
           MessageInput(
             controller: viewModel.messageController,
             onSend: () async {
-              await viewModel.sendChat(otherUid: widget.otherUid);
+              if(viewModel.messageController.text.trim().isNotEmpty){
+                await viewModel.sendChat(otherUid: widget.otherUid);
+              }else{
+                print('Please enter a valid message');
+              }
             },
           ),
         ],

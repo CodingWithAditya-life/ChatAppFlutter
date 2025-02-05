@@ -18,7 +18,6 @@ class VideoChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Video Call")),
       body: ZegoUIKitPrebuiltVideoConference(
         appID: AppInfo.appId,
         appSign: AppInfo.appSign,

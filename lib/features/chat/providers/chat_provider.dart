@@ -59,7 +59,7 @@ class ChatProvider with ChangeNotifier {
 
     String? deviceToken = await tokenServices.getDeviceToken(otherUid);
     if (deviceToken != null && deviceToken.isNotEmpty) {
-      await PushNotificationService.sendNotificationUseApi(
+      await PushNotificationService.sendNotificationToUser(
           token: deviceToken,
           title: "New message",
           message: messageController.text,

@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 class PushNotificationService {
 
-  static Future<void> sendNotificationUseApi({required String token, required String title, required String message, required String otherUid}) async {
+  static Future<void> sendNotificationToUser({required String token, required String title, required String message, required String otherUid}) async {
 
     String accessToken = await GetServerKey().getServerKey();
 

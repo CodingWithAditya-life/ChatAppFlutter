@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class DeviceTokenServices{
+
   Future<void> storeDeviceToken() async {
     String? token = await FirebaseMessaging.instance.getToken();
 

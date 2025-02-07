@@ -1,3 +1,4 @@
+import 'package:chat_app/features/chat/widget/users_search_list_widget.dart';
 import 'package:chat_app/features/home/widget/home_screen_AppBar_widget.dart';
 import 'package:chat_app/providers/user_provider.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -22,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final NotificationService _notificationService = NotificationService();
   final DeviceTokenServices tokenServices = DeviceTokenServices();
   final GetServerKey serverKey = GetServerKey();
+  TextEditingController searchUsersController = TextEditingController();
 
   final DatabaseReference _userRef = FirebaseDatabase.instance.ref("user");
 
@@ -57,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final snapshot = await _userRef.child(widget.uid).get();
       if (snapshot.exists) {
         Map<String, dynamic> userData =
-        Map<String, dynamic>.from(snapshot.value as Map);
+            Map<String, dynamic>.from(snapshot.value as Map);
         setState(() {
           userName = userData['name'];
           userProfilePhoto = userData['photo_url'];
@@ -76,26 +78,35 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: HomeScreenAppBar(),
-      body: Consumer<UserProvider>(
-        builder: (context, userProvider, child) {
-          if (userProvider.userData.isEmpty) {
-            return Center(child: Text("No users found"));
-          } else {
-            return ListView.builder(
-              itemCount: userProvider.userData.length,
-              itemBuilder: (context, index) {
-                var user = userProvider.userData[index];
-                return UserItemList(
-                  userId: user.id ?? "",
-                  userName: user.name ?? "",
-                  photoUrl: user.photo_url ?? "",
-                );
+      body: Column(
+        children: [
+          CustomSearchBar(
+            searchController: searchUsersController,
+            onChanged: (value) {},
+          ),
+          Expanded(
+            child: Consumer<UserProvider>(
+              builder: (context, userProvider, child) {
+                if (userProvider.userData.isEmpty) {
+                  return Center(child: Text("No users found"));
+                } else {
+                  return ListView.builder(
+                    itemCount: userProvider.userData.length,
+                    itemBuilder: (context, index) {
+                      var user = userProvider.userData[index];
+                      return UserItemList(
+                        userId: user.id ?? "",
+                        userName: user.name ?? "",
+                        photoUrl: user.photo_url ?? "",
+                      );
+                    },
+                  );
+                }
               },
-            );
-          }
-        },
+            ),
+          ),
+        ],
       ),
     );
   }
 }
-

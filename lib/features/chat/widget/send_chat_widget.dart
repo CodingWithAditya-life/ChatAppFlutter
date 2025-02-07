@@ -26,7 +26,6 @@ class SendChatWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(message, style: Theme.of(context).textTheme.bodyMedium),
-            SizedBox(height: 3),
             Text(formattedTime,
                 style: TextStyle(color: Colors.grey, fontSize: 12)),
             // Display time

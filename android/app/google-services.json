@@ -1,0 +1,227 @@
+{
+  "project_info": {
+    "project_number": "796808834155",
+    "firebase_url": "https://aimit-151-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "aimit-151",
+    "storage_bucket": "aimit-151.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796808834155:android:ded9fd27f0d40bfd85152e",
+        "android_client_info": {
+          "package_name": "com.communicates.conversations"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "796808834155-4bu3olgph6g7ishsouqfgihfb58643cb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.communicates.conversations",
+            "certificate_hash": "833e538563604e2c955a775cb02789f6a936c6f2"
+          }
+        },
+        {
+          "client_id": "796808834155-st9vvfhndh5jdumaj070abhhirni320n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5SZrdHqJFPa4RP-Jl-M99NXQDlUCn5U8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "796808834155-ck5pbkgi9bpr0e8u6conuqreu0dv48el.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "796808834155-2jnl9609t58rm1rn0kan9b3dvvng98e4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.aimitAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796808834155:android:48177efcea8a1a8b85152e",
+        "android_client_info": {
+          "package_name": "com.edugaon.aimitcollege"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "796808834155-st9vvfhndh5jdumaj070abhhirni320n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5SZrdHqJFPa4RP-Jl-M99NXQDlUCn5U8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "796808834155-ck5pbkgi9bpr0e8u6conuqreu0dv48el.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "796808834155-2jnl9609t58rm1rn0kan9b3dvvng98e4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.aimitAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796808834155:android:476f179fbe24117c85152e",
+        "android_client_info": {
+          "package_name": "com.example.aimit_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "796808834155-st9vvfhndh5jdumaj070abhhirni320n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5SZrdHqJFPa4RP-Jl-M99NXQDlUCn5U8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "796808834155-ck5pbkgi9bpr0e8u6conuqreu0dv48el.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "796808834155-2jnl9609t58rm1rn0kan9b3dvvng98e4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.aimitAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796808834155:android:adcc2dc81441862f85152e",
+        "android_client_info": {
+          "package_name": "com.example.aimitcollege"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "796808834155-6jljqit6ra5ak9k7e2uliu6bbk3vmg5a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aimitcollege",
+            "certificate_hash": "ea2dca1222f77db251188c73f62a5cdd7936e7ec"
+          }
+        },
+        {
+          "client_id": "796808834155-f4dvrni2dirccg1nui11ga1d0d7ins42.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aimitcollege",
+            "certificate_hash": "cb07c717cf01c5d8dcfd65738084d635669e9f74"
+          }
+        },
+        {
+          "client_id": "796808834155-g07fb61l1qmrmcoa2gmn5cgvt6bjdqnd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aimitcollege",
+            "certificate_hash": "2bdce389c6f3cdf28fb93ddf7efddb4c639efe2d"
+          }
+        },
+        {
+          "client_id": "796808834155-ihrinu0ramdm2uq5hlj16jnet2vk6atl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aimitcollege",
+            "certificate_hash": "31e4e3649a6e033c742403ef0fabf1acd0d2296c"
+          }
+        },
+        {
+          "client_id": "796808834155-jcs2kmmpgr9ih7jt9k61f9l9ql1r5u7o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aimitcollege",
+            "certificate_hash": "86083dd944701be68d79515c1c2cea2fce24ed6b"
+          }
+        },
+        {
+          "client_id": "796808834155-lvjdh61hk5prin3i4ort53qk9mjfmms4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aimitcollege",
+            "certificate_hash": "de13656708c7cc113fb02b7bf8c7cc5176eb0d86"
+          }
+        },
+        {
+          "client_id": "796808834155-o46fteckc4d8qpnrc16tt09l8hfdrimq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aimitcollege",
+            "certificate_hash": "22cb0c0e2f39510a92eb5d4a36844833b9cc3df7"
+          }
+        },
+        {
+          "client_id": "796808834155-ot3rogamqvhj1f74nprs9gusdijcekro.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aimitcollege",
+            "certificate_hash": "ec61523128ec321bd96040f000c3deab441d6471"
+          }
+        },
+        {
+          "client_id": "796808834155-st9vvfhndh5jdumaj070abhhirni320n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5SZrdHqJFPa4RP-Jl-M99NXQDlUCn5U8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "796808834155-ck5pbkgi9bpr0e8u6conuqreu0dv48el.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "796808834155-2jnl9609t58rm1rn0kan9b3dvvng98e4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.aimitAdmin"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

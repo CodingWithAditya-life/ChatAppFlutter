@@ -1,14 +1,15 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class UserStatusService {
   final DatabaseReference _userReference =
       FirebaseDatabase.instance.ref('users');
+  Timer? _typingTimer;
 
-  Future<void> updateUserStatus(bool isOnline) async {
+  Future<void> updateUserStatus({required bool isOnline, bool isTyping = false}) async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
     DatabaseReference statusReference =
@@ -17,11 +18,7 @@ class UserStatusService {
     if (isOnline) {
       await statusReference.set({
         "online": true,
-        "lastSeen": DateTime.now().toIso8601String(),
-      });
-    } else {
-      await statusReference.update({
-        "online": false,
+        "typing": isTyping,
         "lastSeen": DateTime.now().toIso8601String(),
       });
     }
@@ -34,10 +31,22 @@ class UserStatusService {
 
     statusReference.onDisconnect().update({
       "online": false,
+      "typing": false,
       "lastSeen": DateTime.now().toIso8601String(),
     });
   }
 
+  void startTyping() {
+    updateUserStatus(isOnline: true, isTyping: true);
+    _typingTimer?.cancel();
+    _typingTimer = Timer(Duration(seconds: 0), () {
+      stopTyping();
+    });
+  }
+
+  void stopTyping() {
+    updateUserStatus(isOnline: true, isTyping: false);
+  }
 
   Widget userStatusWidget(String userId) {
     return StreamBuilder(
@@ -47,7 +56,15 @@ class UserStatusService {
           Map<String, dynamic> status =
           Map<String, dynamic>.from(snapshot.data!.snapshot.value as Map);
           bool isOnline = status['online'] ?? false;
+          bool isTyping = status['typing'] ?? false;
           String lastSeen = status['lastSeen'] ?? '';
+
+          if(isTyping){
+            return Text(
+              "typing...",
+              style: TextStyle(color: Colors.grey.shade50,fontSize: 14),
+            );
+          }
           if (isOnline) {
             return Text(
               "Online",

@@ -20,35 +20,25 @@ class ChatListWidget extends StatelessWidget {
     return Consumer<ChatProvider>(
       builder: (context, value, child) {
         return ListView.builder(
-          controller: _scrollController,
-          padding: EdgeInsets.all(8),
-          itemCount: value.chatList.length,
-          itemBuilder: (context, index) {
-            var message = value.chatList[index];
-            if (message.message_type == "image") {
-              return Align(
-                alignment: message.senderId == uid
-                    ? Alignment.topRight
-                    : Alignment.topLeft,
-                child: Image.network(
-                  message.photo_url ?? "",
-                  height: 100,
-                  width: 100,
-                ),
-              );
-            } else {
-              return message.senderId == uid
+            controller: _scrollController,
+            padding: EdgeInsets.all(8),
+            itemCount: value.chatList.length,
+            itemBuilder: (context, index) {
+              var message = value.chatList[index];
+              bool isMe = message.senderId == uid;
+              return isMe
                   ? SendChatWidget(
-                message: message.message ?? "",
-                time: message.dateTime ?? DateTime.now(),
-              )
+                      message: message.message ?? "",
+                      time: message.dateTime ?? DateTime.now(),
+                      imageUrl: message.message_type == "image" ? message.photo_url : null,
+                      isSeen: message.status == "seen",
+                    )
                   : ReceiveChatWidget(
-                message: message.message ?? "",
-                time: message.dateTime ?? DateTime.now(),
-              );
-            }
-          },
-        );
+                      message: message.message ?? "",
+                      time: message.dateTime ?? DateTime.now(),
+                      imageUrl: message.message_type == "image" ? message.photo_url : null,
+                    );
+            });
       },
     );
   }

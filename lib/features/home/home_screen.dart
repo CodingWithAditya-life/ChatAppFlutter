@@ -1,5 +1,6 @@
 import 'package:chat_app/features/chat/widget/users_search_list_widget.dart';
 import 'package:chat_app/features/home/widget/home_screen_AppBar_widget.dart';
+import 'package:chat_app/model/user_model.dart';
 import 'package:chat_app/providers/user_provider.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -29,6 +30,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String? userName;
   String? userProfilePhoto;
+  String searchQuery = '';
+
+  Future<void> refreshUser() async {
+    await Provider.of<UserProvider>(context, listen: false)
+        .fetchUserData(widget.uid);
+    await getUserData();
+  }
 
   @override
   void initState() {
@@ -47,6 +55,18 @@ class _HomeScreenState extends State<HomeScreen> {
     FirebaseMessaging.onMessage.listen((message) {
       if (message.notification != null) {}
     });
+
+    searchUsersController.addListener(() {
+      setState(() {
+        searchQuery = searchUsersController.text;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    searchUsersController.dispose();
+    super.dispose();
   }
 
   Future<void> _initializeNotification() async {
@@ -54,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
     await _notificationService.requestPermission();
   }
 
-  void getUserData() async {
+  Future<void> getUserData() async {
     if (widget.uid.isNotEmpty) {
       final snapshot = await _userRef.child(widget.uid).get();
       if (snapshot.exists) {
@@ -68,6 +88,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  List<UserModel> filterUsers(List<UserModel> users) {
+    if (searchQuery.trim().isEmpty) {
+      return users;
+    }
+
+    return users.where((user) {
+      final userName = user.name?.toLowerCase() ?? '';
+      return userName.contains(searchQuery.toLowerCase());
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -78,18 +109,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: HomeScreenAppBar(),
-      body: Column(
-        children: [
-          CustomSearchBar(
-            searchController: searchUsersController,
-            onChanged: (value) {},
-          ),
-          Expanded(
-            child: Consumer<UserProvider>(
-              builder: (context, userProvider, child) {
-                if (userProvider.userData.isEmpty) {
-                  return Center(child: Text("No users found"));
-                } else {
+      body: RefreshIndicator(
+        onRefresh: refreshUser,
+        backgroundColor: Color(0xFF292F3F),
+        color: Colors.white,
+        child: Column(
+          children: [
+            CustomSearchBar(
+              searchController: searchUsersController,
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value;
+                });
+              },
+            ),
+            Expanded(
+              child: Consumer<UserProvider>(
+                builder: (context, userProvider, child) {
+                  if (userProvider.userData.isEmpty) {
+                    return Center(child: Text("No users found"));
+                  }
+                  final filteredUsers = filterUsers(userProvider.userData);
+
+                  if (filteredUsers.isEmpty) {
+                    return Center(
+                      child: Text(
+                        "No users found matching '${searchQuery.trim()}'",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    );
+                  }
                   return ListView.builder(
                     itemCount: userProvider.userData.length,
                     itemBuilder: (context, index) {
@@ -101,11 +150,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                   );
-                }
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

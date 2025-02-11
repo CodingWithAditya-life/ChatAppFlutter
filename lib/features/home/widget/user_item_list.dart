@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../chat/screen/chat_screen.dart';
 
-class UserItemList extends StatelessWidget {
+class UserItemList extends StatefulWidget {
   final String userId;
   final String userName;
   final String photoUrl;
@@ -14,21 +14,36 @@ class UserItemList extends StatelessWidget {
       required this.photoUrl});
 
   @override
+  State<UserItemList> createState() => _UserItemListState();
+}
+
+class _UserItemListState extends State<UserItemList> {
+  final ScrollController _scrollController = ScrollController();
+
+  void _scrollToBottom() {
+    Future.delayed(Duration(seconds: 2), () {
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+          duration: Duration(seconds: 200), curve: Curves.easeOut);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
+        _scrollToBottom();
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ChatScreen(
-              otherUid: userId,
-              userName: userName,
+              otherUid: widget.userId,
+              userName: widget.userName,
             ),
           ),
         );
       },
       child: SizedBox(
-        height: 85,
+        height: 77,
         child: Card(
           shadowColor: Colors.transparent,
           color: Colors.transparent,
@@ -37,14 +52,14 @@ class UserItemList extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(width: 5),
-              _buildUserAvatar(photoUrl),
+              _buildUserAvatar(widget.photoUrl),
               SizedBox(width: 13),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    userName,
+                    widget.userName,
                     style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -62,7 +77,7 @@ class UserItemList extends StatelessWidget {
 
   Widget _buildUserAvatar(String photoUrl) {
     return CircleAvatar(
-      maxRadius: 30,
+      maxRadius: 27,
       backgroundColor: Colors.transparent,
       child: photoUrl != null && photoUrl != ""
           ? CircleAvatar(

@@ -10,7 +10,6 @@ class HomeScreenAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       leadingWidth: 25,
-      elevation: 10,
       toolbarHeight: 50,
       backgroundColor: DefaultColors.messageListPage,
       title: const Text("Chats", style: TextStyle(color: Colors.white)),

@@ -24,7 +24,7 @@ class GetServerKey {
         }),
         scopes);
     final serverKey = client.credentials.accessToken.data;
-    print("serverKey=$serverKey");
+    print("serverKey =$serverKey");
     return serverKey;
   }
 }

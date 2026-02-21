@@ -2,34 +2,42 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-class DeviceTokenServices{
-
+class DeviceTokenServices {
   Future<void> storeDeviceToken() async {
+    await FirebaseMessaging.instance.requestPermission();
     String? token = await FirebaseMessaging.instance.getToken();
 
-    if (token != null) {
-      String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    print("Generated Token: $token");
 
-      if (uid.isNotEmpty) {
-        DatabaseReference userRef = FirebaseDatabase.instance.ref('user/$uid');
-        await userRef.update({'deviceToken': token});
-
-        print('Device token stored: $token');
-      }
-    } else {
-      print('Failed to get device token');
+    if (token == null) {
+      print("FCM Token is null");
+      return;
     }
+
+    String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+
+    if (uid.isEmpty) {
+      print("User id is Empty");
+      return;
+    }
+
+    await FirebaseDatabase.instance.ref('user/$uid').update({
+      'deviceToken': token,
+    });
+
+    print("Device token stored successfully");
   }
 
-  Future<String?> getDeviceToken(String userId) async {
-    DatabaseReference userRef = FirebaseDatabase.instance.ref('user/$userId');
-    DataSnapshot snapshot = await userRef.get();
+  Future<String?> getDeviceToken(String uid) async {
+    final snapshot = await FirebaseDatabase.instance
+        .ref('user/$uid/deviceToken')
+        .get();
 
     if (snapshot.exists) {
-      Map<String, dynamic> data = Map<String, dynamic>.from(snapshot.value as Map);
-      return data['deviceToken'];
+      return snapshot.value.toString();
     }
+
+    print("No DeviceToken found for UID: $uid");
     return null;
   }
 }
-

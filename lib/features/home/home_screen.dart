@@ -41,12 +41,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    tokenServices.getDeviceToken(widget.uid);
+
+
+    _initializeNotification();
+    tokenServices.storeDeviceToken();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserProvider>(context, listen: false)
           .fetchUserData(widget.uid);
     });
-    _initializeNotification();
+
     getUserData();
 
     FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
@@ -101,11 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _notificationService.initNotification(context);
-      await tokenServices.storeDeviceToken();
-      await serverKey.getServerKey();
-    });
 
     return Scaffold(
       appBar: HomeScreenAppBar(),

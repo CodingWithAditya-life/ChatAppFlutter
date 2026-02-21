@@ -2,20 +2,23 @@ import 'dart:convert';
 import 'package:chat_app/features/chat/screen/chat_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationService {
-
   FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin
-      _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   static void initialize() {
     const InitializationSettings initializationSettings =
         InitializationSettings(
-            android: AndroidInitializationSettings('@mipmap/ic_launcher'));
+          android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+        );
     _flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         if (response.payload != null) {
           Map<String, dynamic> data = jsonDecode(response.payload!);
@@ -48,10 +51,10 @@ class NotificationService {
   Future<void> initNotification(BuildContext context) async {
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+          alert: true,
+          badge: true,
+          sound: true,
+        );
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       showNotification(message);
@@ -68,39 +71,60 @@ class NotificationService {
     });
   }
 
+  Future<String> _downloadAndSaveFile(String url,String fileName) async{
+    final directory = await getApplicationDocumentsDirectory();
+    final filePath = '${directory.path}/$fileName';
+
+    final response = await http.get(Uri.parse(url));
+    final file = File(filePath);
+    await file.writeAsBytes(response.bodyBytes);
+
+    return filePath;
+  }
+
   Future<void> showNotification(RemoteMessage message) async {
-    AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'high_importance_channel',
-      'High Importance Notifications',
-      importance: Importance.max,
-    );
+    final imageUrl = message.data['photo'];
+
+    String? largeIconPath;
+
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      largeIconPath =
+      await _downloadAndSaveFile(imageUrl, 'profile_${DateTime.now().millisecondsSinceEpoch}');
+    }
 
     AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-        channel.id, channel.name,
-        importance: Importance.max, priority: Priority.high);
+        'high_importance_channel',
+        'High Importance Notifications',
+      importance: Importance.max,
+      priority: Priority.high,
+      largeIcon: largeIconPath != null ? FilePathAndroidBitmap(largeIconPath) : null
+    );
 
-    NotificationDetails notificationDetails =
-        NotificationDetails(android: androidDetails);
+    print("Photo URL in notification: ${message.data['photo']}");
+
+    NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+    );
 
     await _flutterLocalNotificationsPlugin.show(
-      DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      message.notification!.title,
-      message.notification!.body,
-      notificationDetails,
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: message.notification!.title,
+      body: message.notification!.body,
       payload: jsonEncode(message.data),
+      notificationDetails: notificationDetails,
     );
   }
 
   Future<void> handleMessage(
-      BuildContext context, Map<String, dynamic> data) async {
+    BuildContext context,
+    Map<String, dynamic> data,
+  ) async {
     if (data.containsKey('sender_id') && data.containsKey('name')) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ChatScreen(
-            otherUid: data['sender_id'],
-            userName: data['name'],
-          ),
+          builder: (context) =>
+              ChatScreen(otherUid: data['sender_id'], userName: data['name']),
         ),
       );
     } else {

@@ -3,6 +3,7 @@ import '../../../services/user_status_service.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget{
   final String userName;
+  final String? photoUrl;
   final String otherUid;
   final VoidCallback onCallPress;
   final VoidCallback onVideoCallPress;
@@ -13,6 +14,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget{
     required this.otherUid,
     required this.onCallPress,
     required this.onVideoCallPress,
+    this.photoUrl,
   });
 
   String _getInitials(String name) {
@@ -44,15 +46,25 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget{
       title: Row(
         children: [
           CircleAvatar(
+            radius: 22,
             backgroundColor: Colors.white,
-            child: Text(
+            // child: Text(
+            //   userName.isNotEmpty ? _getInitials(userName) : "?",
+            //   style: TextStyle(
+            //     color: Colors.black,
+            //     fontWeight: FontWeight.bold,
+            //     fontSize: 18,
+            //   ),
+            // ),
+            backgroundImage: (photoUrl != null &&photoUrl!.isNotEmpty) ? NetworkImage(photoUrl!) : null,
+            child: (photoUrl == null || photoUrl!.isEmpty) ? Text(
               userName.isNotEmpty ? _getInitials(userName) : "?",
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
-            ),
+            ) : null
           ),
           SizedBox(width: 8),
           Column(

@@ -14,8 +14,14 @@ import 'package:chat_app/features/authentication/call/service/video_call_service
 class ChatScreen extends StatefulWidget {
   final String otherUid;
   final String userName;
+  final String? photoUrl;
 
-  const ChatScreen({super.key, required this.otherUid, required this.userName});
+  const ChatScreen({
+    super.key,
+    required this.otherUid,
+    required this.userName,
+    this.photoUrl,
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -34,11 +40,13 @@ class _ChatScreenState extends State<ChatScreen> {
     Future.delayed(Duration.zero, () async {
       var chatProvider = Provider.of<ChatProvider>(context, listen: false);
       await chatProvider.getChatList(
-          currentUserId: uid ?? "", otherId: widget.otherUid);
+        currentUserId: uid ?? "",
+        otherId: widget.otherUid,
+      );
 
       await chatProvider.markMessagesAsSeen(otherUid: widget.otherUid);
 
-      _seenUpdateTimer = Timer.periodic(Duration(seconds: 2), (timer){
+      _seenUpdateTimer = Timer.periodic(Duration(seconds: 2), (timer) {
         chatProvider.markMessagesAsSeen(otherUid: widget.otherUid);
       });
     });
@@ -47,18 +55,22 @@ class _ChatScreenState extends State<ChatScreen> {
     _statusService.setUserOfflineOnDisconnect();
   }
 
-  void _onTypingStart(){
+  void _onTypingStart() {
     _statusService.updateUserStatus(isOnline: true, isTyping: true);
 
     _seenUpdateTimer?.cancel();
-    _seenUpdateTimer = Timer(Duration(seconds: 2), (){
-      _statusService.updateUserStatus(isOnline: true,isTyping: false);
+    _seenUpdateTimer = Timer(Duration(seconds: 2), () {
+      _statusService.updateUserStatus(isOnline: true, isTyping: false);
     });
   }
 
-  void _scrollToBottom(){
-    Future.delayed(Duration(milliseconds: 200),(){
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 200), curve: Curves.easeOut);
+  void _scrollToBottom() {
+    Future.delayed(Duration(milliseconds: 200), () {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
     });
   }
 
@@ -70,7 +82,10 @@ class _ChatScreenState extends State<ChatScreen> {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => VideoCallService(
-                callID: callID, userID: uid!, userName: widget.userName),
+              callID: callID,
+              userID: uid!,
+              userName: widget.userName,
+            ),
           ),
         );
       }
@@ -84,14 +99,17 @@ class _ChatScreenState extends State<ChatScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => VideoCallService(
-            callID: callID, userID: uid!, userName: widget.userName),
+          callID: callID,
+          userID: uid!,
+          userName: widget.userName,
+        ),
       ),
     );
   }
 
   @override
   void dispose() {
-    _statusService.updateUserStatus(isOnline: true,isTyping: false);
+    _statusService.updateUserStatus(isOnline: true, isTyping: false);
     _seenUpdateTimer?.cancel();
     super.dispose();
   }
@@ -116,25 +134,29 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return Scaffold(
       appBar: ChatAppBar(
-          userName: widget.userName,
-          otherUid: widget.otherUid,
-          onCallPress: () {},
-          onVideoCallPress: _startCall),
+        userName: widget.userName,
+        photoUrl: widget.photoUrl ?? "",
+        otherUid: widget.otherUid,
+        onCallPress: () {},
+        onVideoCallPress: _startCall,
+      ),
       body: Column(
         children: [
           Expanded(
-            child:
-                ChatListWidget(scrollController: _scrollController, uid: uid),
+            child: ChatListWidget(
+              scrollController: _scrollController,
+              uid: uid,
+            ),
           ),
           MessageInput(
             otherUid: widget.otherUid,
             onTyping: _onTypingStart,
             controller: chatProvider.messageController,
             onSend: () async {
-              if(chatProvider.messageController.text.trim().isNotEmpty){
+              if (chatProvider.messageController.text.trim().isNotEmpty) {
                 await chatProvider.sendChat(otherUid: widget.otherUid);
                 _scrollToBottom();
-              }else{
+              } else {
                 print('Please enter a valid message');
               }
             },

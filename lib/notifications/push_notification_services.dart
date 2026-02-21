@@ -6,9 +6,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 
 class PushNotificationService {
-
-  static Future<void> sendNotificationToUser({required String token, required String title, required String message, required String otherUid}) async {
-
+  static Future<void> sendNotificationToUser({
+    required String token,
+    required String title,
+    required String message,
+    required String otherUid,
+    required String photoUrl,
+  }) async {
     String accessToken = await GetServerKey().getServerKey();
 
     var headers = <String, String>{
@@ -19,20 +23,16 @@ class PushNotificationService {
     Map<String, dynamic> body = {
       "message": {
         "token": token,
-        "notification": {
-          "title": title,
-          "body": message,
-        },
-        "data": {
-          "sender_id": otherUid,
-          "name": title,
-        }
-      }
+        "notification": {"title": title, "body": message, "image": photoUrl},
+        "data": {"sender_id": otherUid, "name": title, "photo": photoUrl},
+      },
     };
 
     try {
       http.Response response = await http.post(
-        Uri.parse("https://fcm.googleapis.com/v1/projects/aimit-151/messages:send"),
+        Uri.parse(
+          "https://fcm.googleapis.com/v1/projects/my-shope-c9575/messages:send",
+        ),
         headers: headers,
         body: jsonEncode(body),
       );
@@ -40,29 +40,34 @@ class PushNotificationService {
       if (response.statusCode == 200) {
         Fluttertoast.showToast(msg: "Notification sent successfully");
       } else {
-        Fluttertoast.showToast(msg: "Failed to send notification. Status: ${response.statusCode}");
+        Fluttertoast.showToast(
+          msg: "Failed to send notification. Status: ${response.statusCode}",
+        );
       }
     } catch (e) {
       print("Error sending notification: $e");
     }
   }
 
-  static Future<void> sendCallNotification({required String token, required String callerName, required String callID}) async{
+  static Future<void> sendCallNotification({
+    required String token,
+    required String callerName,
+    required String callID,
+  }) async {
     String serverKey = await GetServerKey().getServerKey();
-    Uri uri = Uri.parse("https://fcm.googleapis.com/v1/projects/aimit-151/messages:send");
+    Uri uri = Uri.parse(
+      "https://fcm.googleapis.com/v1/projects/my-shope-c9575/messages:send",
+    );
 
-    Map<String, dynamic> body =
-    {
+    Map<String, dynamic> body = {
       "message": {
         "token": token,
         "notification": {
           "title": "$callerName is calling you...",
           "body": "Tap to answer the call.",
         },
-        "data": {
-          "call_id": callID
-        }
-      }
+        "data": {"call_id": callID},
+      },
     };
 
     final response = await http.post(
@@ -74,5 +79,4 @@ class PushNotificationService {
       body: json.encode(body),
     );
   }
-
 }

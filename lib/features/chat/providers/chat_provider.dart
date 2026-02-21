@@ -6,6 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../model/user_model.dart';
 import '../../../notifications/get_server_key.dart';
 import '../../../notifications/push_notification_services.dart';
@@ -18,26 +19,29 @@ class ChatProvider with ChangeNotifier {
   var uid = FirebaseAuth.instance.currentUser?.uid ?? "";
   String otherUId = "";
   final DeviceTokenServices tokenServices = DeviceTokenServices();
-  final GetServerKey serverKey = GetServerKey();
+
+  // final GetServerKey serverKey = GetServerKey();
 
   getChatList({required String currentUserId, required String otherId}) {
     var chatId = getChatId(currentUserId: currentUserId, otherId: otherId);
-    DatabaseReference starCountRef =
-        FirebaseDatabase.instance.ref('chatMessages/$chatId');
+    DatabaseReference starCountRef = FirebaseDatabase.instance.ref(
+      'chatMessages/$chatId',
+    );
     starCountRef.orderByChild("dateTime").onValue.listen((DatabaseEvent event) {
       chatList.clear();
       var data = event.snapshot.children;
       for (var element in data) {
         var chat = ChatModel(
-            senderId: element.child("sender_id").value.toString(),
-            receiverId: element.child("receiver_id").value.toString(),
-            message: element.child("message").value.toString(),
-            status: element.child("status").value.toString(),
-            message_type: element.child("message_type").value.toString(),
-            photo_url: element.child("photo_url").value.toString(),
-            dateTime: element.child('dateTime').value != null
-                ? DateTime.parse(element.child('dateTime').value.toString())
-                : null);
+          senderId: element.child("sender_id").value.toString(),
+          receiverId: element.child("receiver_id").value.toString(),
+          message: element.child("message").value.toString(),
+          status: element.child("status").value.toString(),
+          message_type: element.child("message_type").value.toString(),
+          photo_url: element.child("photo_url").value.toString(),
+          dateTime: element.child('dateTime').value != null
+              ? DateTime.parse(element.child('dateTime').value.toString())
+              : null,
+        );
         chatList.add(chat);
         // notifyListeners();
       }
@@ -45,18 +49,20 @@ class ChatProvider with ChangeNotifier {
     });
   }
 
-  sendChat({required String otherUid}) async {
+  Future sendChat({required String otherUid}) async {
     if (messageController.text.trim().isEmpty) return;
 
     var currentUserId = uid.toString();
     var chatId = getChatId(otherId: otherUid, currentUserId: currentUserId);
     var randomId = generateRandomString(40);
 
-    DatabaseReference starCountRef =
-        FirebaseDatabase.instance.ref('chatMessages/$chatId');
+    DatabaseReference starCountRef = FirebaseDatabase.instance.ref(
+      'chatMessages/$chatId',
+    );
 
-    DatabaseReference userRef =
-        FirebaseDatabase.instance.ref('user/$currentUserId');
+    DatabaseReference userRef = FirebaseDatabase.instance.ref(
+      'user/$currentUserId',
+    );
     var userSnapshot = await userRef.get();
 
     String senderName = "Unknown";
@@ -69,22 +75,32 @@ class ChatProvider with ChangeNotifier {
       print("User data not found in Firebase.");
     }
 
-    await starCountRef.child(randomId).set(ChatModel(
+    await starCountRef
+        .child(randomId)
+        .set(
+          ChatModel(
             message: messageController.text.toString(),
             senderId: "$uid",
             receiverId: otherUid,
             message_type: "text",
             status: "sent",
-            dateTime: DateTime.now())
-        .toJson());
+            dateTime: DateTime.now(),
+          ).toJson(),
+        );
+
+    String senderPhoto = userSnapshot.child("photo_url").value?.toString() ?? "";
 
     String? deviceToken = await tokenServices.getDeviceToken(otherUid);
+    print("Other UID: $otherUid");
+    print("Fetched Token: $deviceToken");
     if (deviceToken != null && deviceToken.isNotEmpty) {
       await PushNotificationService.sendNotificationToUser(
-          token: deviceToken,
-          title: senderName,
-          message: messageController.text,
-          otherUid: otherUid);
+        token: deviceToken,
+        title: senderName,
+        message: messageController.text,
+        otherUid: otherUid,
+        photoUrl: senderPhoto
+      );
     } else {
       Fluttertoast.showToast(msg: "Failed to get recipient's device token");
     }
@@ -93,36 +109,71 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> sendImage(
-      {required String otherUid, required File imageFile}) async {
-    String? imageUrl = await uploadImageToFirebase(imageFile);
+  Future<void> sendImage({
+    required String otherUid,
+    required File imageFile,
+  }) async {
+    String? imageUrl = await uploadImageToSupabase(imageFile);
 
     if (imageUrl != null) {
       var chatId = getChatId(currentUserId: uid, otherId: otherUid);
       var randomId = generateRandomString(20);
-      DatabaseReference reference =
-          FirebaseDatabase.instance.ref("chatMessages/$chatId");
+      DatabaseReference reference = FirebaseDatabase.instance.ref(
+        "chatMessages/$chatId",
+      );
 
-      await reference.child(randomId).set(ChatModel(
+      await reference
+          .child(randomId)
+          .set(
+            ChatModel(
               senderId: uid,
               receiverId: otherUid,
               message_type: "image",
               photo_url: imageUrl,
               message: '',
-              dateTime: DateTime.now())
-          .toJson());
+              dateTime: DateTime.now(),
+            ).toJson(),
+          );
     }
   }
 
-  Future<String?> uploadImageToFirebase(File imageFile) async {
+  // Future<String?> uploadImageToFirebase(File imageFile) async {
+  //   try {
+  //     String path = "chat_avatars/${DateTime.now().millisecondsSinceEpoch}.jpg";
+  //     Reference storageReference = FirebaseStorage.instance.ref().child(path);
+  //     UploadTask uploadTask = storageReference.putFile(imageFile);
+  //     TaskSnapshot taskSnapshot = await uploadTask;
+  //     return await taskSnapshot.ref.getDownloadURL();
+  //   } catch (e) {
+  //     print("Image Upload Error: $e");
+  //     return null;
+  //   }
+  // }
+
+  Future<String?> uploadImageToSupabase(File imageFile) async {
     try {
-      String fileName = "chat_images/${DateTime.now().millisecondsSinceEpoch}.jpg";
-      Reference storageReference = FirebaseStorage.instance.ref().child(fileName);
-      UploadTask uploadTask = storageReference.putFile(imageFile);
-      TaskSnapshot taskSnapshot = await uploadTask;
-      return await taskSnapshot.ref.getDownloadURL();
+      final supabase = Supabase.instance.client;
+
+      final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+
+      final path = 'uploads/$fileName';
+
+      final response = await supabase.storage
+          .from('avatars')
+          .upload(
+            path,
+            imageFile,
+          );
+
+      final publicUrl = supabase.storage
+          .from("avatars")
+          .getPublicUrl(path);
+
+      print("Uploaded URL: $publicUrl");
+
+      return publicUrl;
     } catch (e) {
-      print("Image Upload Error: $e");
+      print("Image Upload Failed $e");
       return null;
     }
   }
@@ -131,8 +182,10 @@ class ChatProvider with ChangeNotifier {
     var r = Random();
     const _chars =
         'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    return List.generate(len, (index) => _chars[r.nextInt(_chars.length)])
-        .join();
+    return List.generate(
+      len,
+      (index) => _chars[r.nextInt(_chars.length)],
+    ).join();
   }
 
   getUserList() {
@@ -140,15 +193,14 @@ class ChatProvider with ChangeNotifier {
     starCountRef.onValue.listen((DatabaseEvent event) {
       var data = event.snapshot.children;
       userList.clear();
-      data.forEach(
-        (element) {
-          var user = UserModel(
-              name: element.child("name").value.toString(),
-              email: element.child("email").value.toString(),
-              id: element.child("id").value.toString());
-          userList.add(user);
-        },
-      );
+      data.forEach((element) {
+        var user = UserModel(
+          name: element.child("name").value.toString(),
+          email: element.child("email").value.toString(),
+          id: element.child("id").value.toString(),
+        );
+        userList.add(user);
+      });
       notifyListeners();
     });
   }
@@ -175,9 +227,11 @@ class ChatProvider with ChangeNotifier {
     return id;
   }
 
-  Future<void> markMessagesAsSeen({required String otherUid})async{
-    var chatId = getChatId(currentUserId:uid,otherId:otherUid);
-    DatabaseReference reference = FirebaseDatabase.instance.ref("chatMessages/$chatId");
+  Future<void> markMessagesAsSeen({required String otherUid}) async {
+    var chatId = getChatId(currentUserId: uid, otherId: otherUid);
+    DatabaseReference reference = FirebaseDatabase.instance.ref(
+      "chatMessages/$chatId",
+    );
 
     var snapshot = await reference.get();
     bool anyUpdate = false;
@@ -189,7 +243,7 @@ class ChatProvider with ChangeNotifier {
       }
     }
 
-    if(anyUpdate){
+    if (anyUpdate) {
       notifyListeners();
     }
   }

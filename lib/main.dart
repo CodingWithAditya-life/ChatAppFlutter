@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'core/theme/theme.dart';
 import 'features/authentication/call/service/video_call_services.dart';
 import 'firebase_options.dart';
+import 'package:supabase/supabase.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
@@ -20,6 +22,11 @@ Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://kjqdmgcywpmzuncpexqa.supabase.co',
+    anonKey: 'sb_publishable_mau580_Z_fVcBJxUaOTf2w_bRd2aD-2',
+  );
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Firebase.initializeApp();
 
@@ -32,13 +39,15 @@ void main() async {
 
   NotificationService.initialize();
 
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (_) => UserProvider()),
-      ChangeNotifierProvider(create: (_) => ChatProvider()),
-    ],
-    child: const MyApp(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -55,13 +64,15 @@ class MyApp extends StatelessWidget {
       if (message.data.containsKey("call_id")) {
         String callID = message.data["call_id"];
 
-        navigatorKey.currentState?.push(MaterialPageRoute(
-          builder: (context) => VideoCallService(
-            callID: callID,
-            userID: FirebaseAuth.instance.currentUser!.uid,
-            userName: 'name',
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (context) => VideoCallService(
+              callID: callID,
+              userID: FirebaseAuth.instance.currentUser!.uid,
+              userName: 'name',
+            ),
           ),
-        ));
+        );
       }
     });
 
@@ -70,8 +81,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.darkTheme,
       debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey,
-      home: SplashScreen()
+      home: SplashScreen(),
     );
   }
 }
-

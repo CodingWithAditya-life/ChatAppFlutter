@@ -17,17 +17,29 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
-        return windows;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -40,54 +52,12 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBay0NWLKsQg-FUteWnJK3LYou8WRWgk4s',
-    appId: '1:796808834155:web:ef87e21fa8bf310585152e',
-    messagingSenderId: '796808834155',
-    projectId: 'aimit-151',
-    authDomain: 'aimit-151.firebaseapp.com',
-    storageBucket: 'aimit-151.appspot.com',
-    measurementId: 'G-Z5GY6YLSCK',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB5SZrdHqJFPa4RP-Jl-M99NXQDlUCn5U8',
-    appId: '1:796808834155:android:ded9fd27f0d40bfd85152e',
-    messagingSenderId: '796808834155',
-    projectId: 'aimit-151',
-    storageBucket: 'aimit-151.appspot.com',
+    apiKey: 'AIzaSyCuHN1ovsXSOL0v5DWzJlsw0HEHhYSlQKc',
+    appId: '1:427687930222:android:3dd2e690af5cd15c7fb97f',
+    messagingSenderId: '427687930222',
+    projectId: 'my-shope-c9575',
+    databaseURL: 'https://my-shope-c9575-default-rtdb.firebaseio.com',
+    storageBucket: 'my-shope-c9575.firebasestorage.app',
   );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCXjBb0yRu88CqZpQlNOf-0odopsFMdWWQ',
-    appId: '1:796808834155:ios:b455b7ee8d66b86585152e',
-    messagingSenderId: '796808834155',
-    projectId: 'aimit-151',
-    storageBucket: 'aimit-151.appspot.com',
-    androidClientId: '796808834155-6jljqit6ra5ak9k7e2uliu6bbk3vmg5a.apps.googleusercontent.com',
-    iosClientId: '796808834155-ahed0ruc8qnm2o11anna8ql2i0kpsg2s.apps.googleusercontent.com',
-    iosBundleId: 'com.communicates.conversations',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCXjBb0yRu88CqZpQlNOf-0odopsFMdWWQ',
-    appId: '1:796808834155:ios:f9b4480c5e2e6d3985152e',
-    messagingSenderId: '796808834155',
-    projectId: 'aimit-151',
-    storageBucket: 'aimit-151.appspot.com',
-    androidClientId: '796808834155-6jljqit6ra5ak9k7e2uliu6bbk3vmg5a.apps.googleusercontent.com',
-    iosClientId: '796808834155-eia9ut6a5s315i0maactakpmp8dv2p4v.apps.googleusercontent.com',
-    iosBundleId: 'com.example.chatApp',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDssHsWnKMV5pVriHSaL8vaPzIYYnp3KsE',
-    appId: '1:796808834155:web:053a8fb51d3e21dd85152e',
-    messagingSenderId: '796808834155',
-    projectId: 'aimit-151',
-    authDomain: 'aimit-151.firebaseapp.com',
-    storageBucket: 'aimit-151.appspot.com',
-    measurementId: 'G-6E435V4BXF',
-  );
-
 }

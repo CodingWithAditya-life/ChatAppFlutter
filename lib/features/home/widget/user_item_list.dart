@@ -7,37 +7,29 @@ class UserItemList extends StatefulWidget {
   final String userName;
   final String photoUrl;
 
-  const UserItemList(
-      {super.key,
-      required this.userId,
-      required this.userName,
-      required this.photoUrl});
+  const UserItemList({
+    super.key,
+    required this.userId,
+    required this.userName,
+    required this.photoUrl,
+  });
 
   @override
   State<UserItemList> createState() => _UserItemListState();
 }
 
 class _UserItemListState extends State<UserItemList> {
-  final ScrollController _scrollController = ScrollController();
-
-  void _scrollToBottom() {
-    Future.delayed(Duration(seconds: 2), () {
-      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-          duration: Duration(seconds: 200), curve: Curves.easeOut);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
-        _scrollToBottom();
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ChatScreen(
               otherUid: widget.userId,
               userName: widget.userName,
+              photoUrl: widget.photoUrl,
             ),
           ),
         );
@@ -61,9 +53,10 @@ class _UserItemListState extends State<UserItemList> {
                   Text(
                     widget.userName,
                     style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 19),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 19,
+                    ),
                   ),
                   Text('Message_type'),
                 ],
@@ -80,10 +73,7 @@ class _UserItemListState extends State<UserItemList> {
       maxRadius: 27,
       backgroundColor: Colors.transparent,
       child: photoUrl != null && photoUrl != ""
-          ? CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(photoUrl),
-            )
+          ? CircleAvatar(radius: 50, backgroundImage: NetworkImage(photoUrl))
           : Icon(CupertinoIcons.person),
     );
   }
